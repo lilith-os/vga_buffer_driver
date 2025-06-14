@@ -24,8 +24,8 @@ impl Writer {
     }
     
     pub fn write_char(&mut self, ch: char) {
-        match ch { 
-            '\n' => self.new_line(),
+        match ch as u8 { 
+            b'\n' => self.new_line(),
             ch => {
                 if self.column_position >= BUFFER_WIDTH {
                     self.new_line();
