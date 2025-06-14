@@ -1,3 +1,5 @@
+#![no_std]
+
 mod color;
 mod screen_char;
 mod writer;
