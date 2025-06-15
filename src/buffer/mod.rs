@@ -1,6 +1,7 @@
 use volatile::{VolatilePtr};
 use crate::screen_char::ScreenChar;
 
+#[cfg(not(feature = "no_std"))]
 pub(crate) mod mock;
 
 pub(crate) const BUFFER_HEIGHT: usize = 25;
