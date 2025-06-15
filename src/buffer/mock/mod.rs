@@ -1,5 +1,3 @@
-use core::fmt;
-use core::fmt::Formatter;
 use crate::buffer::{CharBuffer, BUFFER_HEIGHT, BUFFER_WIDTH};
 use crate::screen_char::ScreenChar;
 
@@ -15,6 +13,7 @@ impl MockBuffer {
         }
     }
     
+    #[allow(unused)]
     pub(crate) fn print(&self) {
         println!("{:?}", self)
     }
