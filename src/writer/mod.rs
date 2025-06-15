@@ -1,4 +1,5 @@
-use crate::buffer::{CharBuffer, VGABuffer, BUFFER_WIDTH};
+use core::fmt;
+use crate::buffer::{CharBuffer, VGABuffer, BUFFER_HEIGHT, BUFFER_WIDTH};
 use crate::color::{Color, ColorCode};
 use crate::screen_char::ScreenChar;
 
@@ -51,9 +52,29 @@ impl Writer {
         unsafe { (*self.buffer).set_char_at(row, col, ch) };
     }
     
+    pub fn read_char_at(&mut self, row: usize, col: usize) -> ScreenChar {
+        unsafe { (*self.buffer).get_char_at(row, col) }
+    }
+    
     pub fn new_line(&mut self) {
         self.column_position = 0;
+        if self.row_position >= BUFFER_HEIGHT-1 {
+            for row in 1..BUFFER_HEIGHT {
+                for col in 0..BUFFER_WIDTH {
+                    let ch = self.read_char_at(row, col);
+                    self.write_char_at(row-1, col, ch);
+                }
+            }
+            self.clear_row(self.row_position);
+            return;
+        }
         self.row_position += 1;
+    }
+    
+    pub fn clear_row(&mut self, row: usize) {
+        for col in 0..BUFFER_WIDTH {
+            self.write_char_at(row, col, ScreenChar::new(b' ', self.color_code));
+        }
     }
     
     pub fn write_string(&mut self, string: &str) {
@@ -63,5 +84,12 @@ impl Writer {
                 false => self.write_char(0xfe as char)
             }
         }
+    }
+}
+
+impl fmt::Write for Writer {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.write_string(s);
+        Ok(())
     }
 }

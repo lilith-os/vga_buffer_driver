@@ -12,7 +12,7 @@ impl ScreenChar {
         Self { character, color_code }
     }
     
-    pub const fn default() -> Self { Self { character: 0, color_code: ColorCode::default() } } 
+    pub const fn default() -> Self { Self { character: b' ', color_code: ColorCode::default() } } 
 }
 
 impl Default for ScreenChar {
