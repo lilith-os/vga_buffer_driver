@@ -12,6 +12,7 @@ impl MockBuffer {
         }
     }
     
+    #[allow(unused)]
     pub(crate) fn get_char_at(&self, row: usize, col: usize) -> ScreenChar {
         self.chars[row][col]
     }

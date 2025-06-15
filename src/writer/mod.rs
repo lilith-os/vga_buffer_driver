@@ -1,4 +1,4 @@
-use crate::buffer::{CharBuffer, VGABuffer, BUFFER_HEIGHT, BUFFER_WIDTH};
+use crate::buffer::{CharBuffer, VGABuffer, BUFFER_WIDTH};
 use crate::color::{Color, ColorCode};
 use crate::screen_char::ScreenChar;
 
@@ -8,6 +8,7 @@ mod test;
 
 pub struct Writer {
     column_position: usize,
+    row_position: usize,
     color_code: ColorCode,
     buffer: *mut dyn CharBuffer
 }
@@ -22,6 +23,7 @@ impl Writer {
     pub(crate) fn new(buffer: *mut dyn CharBuffer) -> Self {
         Self {
             column_position: 0,
+            row_position: 0,
             color_code: ColorCode::new(Color::White, Color::Black),
             buffer
         }
@@ -35,7 +37,7 @@ impl Writer {
                     self.new_line();
                 }
                 
-                let row = BUFFER_HEIGHT - 1;
+                let row = self.row_position;
                 let col = self.column_position;
                 let color_code = self.color_code;
                 
@@ -50,7 +52,8 @@ impl Writer {
     }
     
     pub fn new_line(&mut self) {
-        todo!()
+        self.column_position = 0;
+        self.row_position += 1;
     }
     
     pub fn write_string(&mut self, string: &str) {
