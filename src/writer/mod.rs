@@ -7,20 +7,20 @@ use crate::screen_char::ScreenChar;
 #[cfg(not(feature = "no_std"))]
 mod test;
 
-pub struct Writer {
+pub struct VGAWriter {
     column_position: usize,
     row_position: usize,
     color_code: ColorCode,
     buffer: *mut dyn CharBuffer
 }
 
-impl Default for Writer {
+impl Default for VGAWriter {
     fn default() -> Self {
         Self::new(0xb8000 as *mut VGABuffer)
     }
 }
 
-impl Writer {
+impl VGAWriter {
     pub(crate) fn new(buffer: *mut dyn CharBuffer) -> Self {
         Self {
             column_position: 0,
@@ -87,7 +87,7 @@ impl Writer {
     }
 }
 
-impl fmt::Write for Writer {
+impl fmt::Write for VGAWriter {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         self.write_string(s);
         Ok(())

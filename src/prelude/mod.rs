@@ -1,1 +1,1 @@
-pub use crate::writer::Writer;
+pub use crate::writer::VGAWriter;

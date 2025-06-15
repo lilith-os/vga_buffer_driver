@@ -3,7 +3,7 @@ use crate::buffer::{CharBuffer, BUFFER_HEIGHT};
 use crate::buffer::mock::MockBuffer;
 use crate::color::ColorCode;
 use crate::screen_char::ScreenChar;
-use crate::writer::Writer;
+use crate::writer::VGAWriter;
 
 #[test]
 fn write_char() {
@@ -12,7 +12,7 @@ fn write_char() {
     #[allow(unused_unsafe)]
     let mock_buffer= unsafe { &raw mut MOCK_BUFFER };
     
-    let mut writer = Writer::new(mock_buffer);
+    let mut writer = VGAWriter::new(mock_buffer);
     writer.write_char('H');
     
     assert_eq!(
@@ -28,7 +28,7 @@ fn write_some_chars() {
     #[allow(unused_unsafe)]
     let mock_buffer= unsafe { &raw mut MOCK_BUFFER };
 
-    let mut writer = Writer::new(mock_buffer);
+    let mut writer = VGAWriter::new(mock_buffer);
     writer.write_char('H');
     writer.write_char('e');
     writer.write_char('y');
@@ -56,7 +56,7 @@ fn chars_overflow() {
     #[allow(unused_unsafe)]
     let mock_buffer= unsafe { &raw mut MOCK_BUFFER };
 
-    let mut writer = Writer::new(mock_buffer);
+    let mut writer = VGAWriter::new(mock_buffer);
     
     for _ in 0..BUFFER_HEIGHT {
         writer.write_string("Hey\n");
