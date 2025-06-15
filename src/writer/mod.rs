@@ -11,7 +11,7 @@ pub struct VGAWriter {
     column_position: usize,
     row_position: usize,
     color_code: ColorCode,
-    buffer: *mut dyn CharBuffer
+    buffer: &'static mut dyn CharBuffer
 }
 
 impl Default for VGAWriter {
@@ -26,36 +26,36 @@ impl VGAWriter {
             column_position: 0,
             row_position: 0,
             color_code: ColorCode::new(Color::White, Color::Black),
-            buffer
+            buffer: unsafe { &mut *buffer }
         }
     }
-    
+
     pub fn write_char(&mut self, ch: char) {
-        match ch as u8 { 
+        match ch as u8 {
             b'\n' => self.new_line(),
             ch => {
                 if self.column_position >= BUFFER_WIDTH {
                     self.new_line();
                 }
-                
+
                 let row = self.row_position;
                 let col = self.column_position;
                 let color_code = self.color_code;
-                
+
                 self.write_char_at(row, col, ScreenChar::new(ch, color_code));
                 self.column_position += 1;
             }
         }
     }
-    
+
     pub fn write_char_at(&mut self, row: usize, col: usize, ch: ScreenChar) {
-        unsafe { (*self.buffer).set_char_at(row, col, ch) };
+        self.buffer.set_char_at(row, col, ch);
     }
-    
+
     pub fn read_char_at(&mut self, row: usize, col: usize) -> ScreenChar {
-        unsafe { (*self.buffer).get_char_at(row, col) }
+        self.buffer.get_char_at(row, col)
     }
-    
+
     pub fn new_line(&mut self) {
         self.column_position = 0;
         if self.row_position >= BUFFER_HEIGHT-1 {
@@ -70,13 +70,13 @@ impl VGAWriter {
         }
         self.row_position += 1;
     }
-    
+
     pub fn clear_row(&mut self, row: usize) {
         for col in 0..BUFFER_WIDTH {
             self.write_char_at(row, col, ScreenChar::new(b' ', self.color_code));
         }
     }
-    
+
     pub fn write_string(&mut self, string: &str) {
         for ch in string.chars() {
             match ch.is_ascii() {
