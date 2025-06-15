@@ -11,4 +11,12 @@ impl ScreenChar {
     pub fn new(character: u8, color_code: ColorCode) -> Self {
         Self { character, color_code }
     }
+    
+    pub const fn default() -> Self { Self { character: 0, color_code: ColorCode::default() } } 
+}
+
+impl Default for ScreenChar {
+    fn default() -> Self {
+        Self::default()
+    }
 }

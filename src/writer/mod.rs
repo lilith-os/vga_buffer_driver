@@ -1,25 +1,29 @@
-use crate::buffer::{VGABuffer, BUFFER_HEIGHT, BUFFER_WIDTH};
+use crate::buffer::{CharBuffer, VGABuffer, BUFFER_HEIGHT, BUFFER_WIDTH};
 use crate::color::{Color, ColorCode};
 use crate::screen_char::ScreenChar;
+
+#[cfg(test)]
+#[cfg(not(feature = "no_std"))]
+mod test;
 
 pub struct Writer {
     column_position: usize,
     color_code: ColorCode,
-    buffer: &'static mut VGABuffer
+    buffer: *mut dyn CharBuffer
 }
 
 impl Default for Writer {
     fn default() -> Self {
-        Self::new()
+        Self::new(0xb8000 as *mut VGABuffer)
     }
 }
 
 impl Writer {
-    pub fn new() -> Self {
+    pub(crate) fn new(buffer: *mut dyn CharBuffer) -> Self {
         Self {
             column_position: 0,
             color_code: ColorCode::new(Color::White, Color::Black),
-            buffer: unsafe { &mut *(0xb8000 as *mut VGABuffer) }
+            buffer
         }
     }
     
@@ -35,10 +39,14 @@ impl Writer {
                 let col = self.column_position;
                 let color_code = self.color_code;
                 
-                self.buffer.set_char_at(row, col, ScreenChar::new(ch, color_code));
+                self.write_char_at(row, col, ScreenChar::new(ch, color_code));
                 self.column_position += 1;
             }
         }
+    }
+    
+    pub fn write_char_at(&mut self, row: usize, col: usize, ch: ScreenChar) {
+        unsafe { (*self.buffer).set_char_at(row, col, ch) };
     }
     
     pub fn new_line(&mut self) {

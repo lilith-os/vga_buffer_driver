@@ -1,7 +1,7 @@
-#![no_std]
+#![cfg_attr(feature = "no_std", no_std)]
 
 mod color;
 mod screen_char;
 mod writer;
-mod buffer;
+pub(crate) mod buffer;
 pub mod prelude;
